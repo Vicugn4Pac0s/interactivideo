@@ -1,4 +1,6 @@
 src/
 public/
+tsconfig.json
+
 style.css
 index.html
