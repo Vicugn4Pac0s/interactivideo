@@ -1,11 +1,17 @@
 {
   "name": "interactivideo",
   "private": false,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "prepublish": "$(npm bin)/tsc",
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc",
     "preview": "vite preview"
   },
   "devDependencies": {

@@ -2,7 +2,7 @@ import { normalize, zeroPadding } from './helpers'
 import Semaphore from './helpers/Semaphore'
 import { CanvasPlayerFrame } from './type'
 
-export default class {
+export class CanvasPlayerLoader {
   id: string
   imgDir: string
   imgExt: string

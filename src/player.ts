@@ -7,7 +7,7 @@ interface PlayerEvents {
 /**
  * このクラスはビデオプレーヤーの制御を行うクラスです。
  */
-export default class {
+export class Player {
   player: HTMLVideoElement
   #fps = 15
   #timeFrame = 0.0666

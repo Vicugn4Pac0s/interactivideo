@@ -1,13 +1,13 @@
 import { findData, normalize } from './helpers'
 import Observer from './helpers/Observer'
-import Loader from './canvas-player-loader'
+import { CanvasPlayerLoader } from './canvas-player-loader'
 import { createDefaultId } from './helpers/createDefaultId'
 import { CanvasPlayerData, CanvasPlayerFrame, LoaderOptions } from './type'
 
 interface CanvasPlayerEvents {
 }
 
-export default class {
+export class CanvasPlayer {
   canvasDOM: HTMLCanvasElement
   ctx: CanvasRenderingContext2D | null = null
 
@@ -123,7 +123,7 @@ export default class {
       imgCount,
       fps
     }
-    const loader = new Loader(opts);
+    const loader = new CanvasPlayerLoader(opts);
     loader.load(()=>{
       this.#observer.trigger('loaded', {
         videoId: opts.id
