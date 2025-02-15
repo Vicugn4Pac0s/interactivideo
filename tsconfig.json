@@ -20,5 +20,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src", "helpers", "canvas-player-loader.ts", "canvas-player.ts", "index.ts", "player.ts", "type.d.ts"]
 }

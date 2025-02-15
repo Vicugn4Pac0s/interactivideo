@@ -1,4 +1,4 @@
-import Interactivideo from "./interactivideo";
+import Interactivideo from "..";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
