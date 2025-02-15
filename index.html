@@ -1,12 +1,49 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
+    <title>INTERACTIVIDEO</title>
+
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module" src="./src/index.ts"></script>
+    <div class="wrap">
+
+      <div class="mv">
+        <h1 class="mv__ttl">
+          INTERACTIVIDEO
+        </h1>
+      </div>
+      
+      <div class="iv-wrap sec sec01">
+        <video id="iv-player" class="sec01__video" data-src="./sample.mp4" data-fps="12"></video>
+        <div class="sec__body sec01__body">
+          <p>Interactivideo.playerは、Progress（0～1に正規化された値）に基づいてプレーヤーを再生できます。<br>これにより、スクロールと連動して動画を再生させることができます。<br>フレームの出力にラグが発生するため、高フレームレート・高画質の再生には向いていません。</p>
+        </div>
+      </div>
+  
+      <div class="iv-wrap sec sec02">
+        <canvas id="iv-canvas-player" class="sec02__video" data-img_count="45" data-img_dir="/interactivideo-data/airpodspro-webp/" data-img_ext="webp" width="1920px" height="1080px"></canvas>
+        <div class="sec__body sec02__body">
+          <p>Interactivideo.canvasPlayerは、canvasを使用して動画を再生できます。<br>Interactivideo.playerと同様、Progressに基づいての再生も可能です。<br>こちらはフレーム出力のラグがないため、滑らかな再生ができます。<br>フレームごとの画像を用意する必要があります。</p>
+        </div>
+      </div>
+
+      <div class="iv-wrap sec sec03">
+        <canvas id="iv-canvas-player02" class="sec03__video" data-img_count="45" data-img_dir="/interactivideo-data/airpodspro-webp/" data-img_ext="webp" width="1920px" height="1080px"></canvas>
+        <div class="sec03__btns">
+          <div id="btn-load" class="btn">LOAD</div>
+          <div id="btn-play" class="btn">PLAY</div>
+          <div id="btn-play-loop" class="btn">PLAY<br>（LOOP）</div>
+          <div id="btn-play-reverse" class="btn">PLAY<br>（REVERSE）</div>
+          <div id="btn-pause" class="btn">PAUSE</div>
+        </div>
+      </div>
+
+      
+    </div>    
+
+    <script type="module" src="src/index.ts"></script>
   </body>
 </html>
