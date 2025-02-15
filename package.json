@@ -9,12 +9,14 @@
     "dist"
   ],
   "scripts": {
-    "prepublish": "$(npm bin)/tsc",
+    "clean": "rimraf dist",
+    "prepublish": "rimraf dist && $(npm bin)/tsc",
     "dev": "vite",
-    "build": "tsc",
+    "build": "npm run clean && tsc",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "rimraf": "^6.0.1",
     "typescript": "~5.7.2",
     "vite": "^6.1.0"
   },
