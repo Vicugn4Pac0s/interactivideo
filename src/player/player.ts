@@ -61,16 +61,27 @@ export class Player {
   #observer = new Observer<PlayerEvents>()
 
   /**
-   * クラスのコンストラクタです。
-   * @param {string} id - ビデオ要素のID名
+   * プレーヤーのインスタンスを作成します。
+   * 
+   * @param id - HTMLビデオ要素のID。
+   * @param params - プレーヤーのオプションパラメータ。
+   * @param params.fps - プレーヤーのフレーム毎秒。
+   * 
+   * @remarks
+   * 指定されたIDの要素がビデオ要素でない場合、コンソールにエラーが記録されます。
+   * fpsの範囲は1から60の間である必要があります。デフォルトは15です。
    */
-  constructor(id: string) {
+  constructor(id: string, params?: { fps: number }) {
     this.player = document.getElementById(id) as HTMLVideoElement
     if (!this.player || this.player.tagName !== 'VIDEO') {
       console.error(`The element with the ID "${id}" is not a video element.`)
       return
     }
-    this.#fps = Number(this.player.dataset.fps) || this.#fps
+    if (params?.fps && (params.fps < 1 || params.fps > 60)) {
+      console.error(`The fps value "${params.fps}" is out of range. It must be between 1 and 60.`)
+      return
+    }
+    this.#fps = params?.fps || this.#fps
     this.#playerEvents()
   }
 
