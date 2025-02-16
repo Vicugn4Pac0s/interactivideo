@@ -3,7 +3,7 @@
  * @param {number} fps - フレームレート
  * @returns {number} - 各フレームの時間間隔（秒）
  */
-export function calculateTimeFrame(fps: number): number {
+const calculateTimeFrame = (fps: number) => {
   return Math.floor((1 / fps) * 10000) / 10000;
 }
 
