@@ -8,6 +8,10 @@ import { drawFrame } from './canvas-player-utils'
 interface CanvasPlayerEvents {
 }
 
+// TODO: 外部関数化によるリファクタリング
+// TODO: state管理のオブジェクト化
+// TODO: イベントコールバック関数の調整
+// TODO: data-srcからの取得ではなく、引数からの取得に
 export class CanvasPlayer {
   canvasDOM: HTMLCanvasElement
   ctx: CanvasRenderingContext2D | null = null
