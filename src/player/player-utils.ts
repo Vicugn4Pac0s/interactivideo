@@ -1,4 +1,13 @@
 /**
+ * フレームレートに基づいて、各フレームの時間間隔（秒）を計算します。
+ * @param {number} fps - フレームレート
+ * @returns {number} - 各フレームの時間間隔（秒）
+ */
+export function calculateTimeFrame(fps: number): number {
+  return Math.floor((1 / fps) * 10000) / 10000;
+}
+
+/**
  * 現在のフレームとターゲットフレームに基づいて次に移動するフレームを計算します。
  *
  * @param currentFrame - 現在のフレーム番号。
@@ -25,13 +34,15 @@ export const getNextFrame = (currentFrame: number, targetFrame: number) => {
 }
 
 /**
- * 指定されたタイムフレーム間隔と総フレーム数に基づいてタイムフレームの配列を生成します。
+ * 総フレーム数とフレームレート（fps）に基づいて、時間フレームの配列を生成します。
  *
- * @param {number} totalFrame - 生成する総フレーム数。
- * @param {number} timeFrame - 各タイムフレーム間の間隔。
- * @returns {number[]} タイムフレームの配列。
+ * @param totalFrame - 総フレーム数。
+ * @param fps - フレームレート。
+ * @returns 各フレームの時間（秒）を表す配列。
  */
-export const getTimeFrameArr = (totalFrame: number, timeFrame: number,) => {
+export const getTimeFrameArr = (totalFrame: number, fps: number) => {
+  const timeFrame = calculateTimeFrame(fps);
+
   const timeFrameArr = []
   for (let i = 0; i < totalFrame; i++) {
     timeFrameArr.push(timeFrame * i)

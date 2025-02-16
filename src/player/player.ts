@@ -11,7 +11,6 @@ interface PlayerEvents {
 export class Player {
   player: HTMLVideoElement
   #fps = 15
-  #timeFrame = 0.0666
   #timeFrameArr: number[] = []
   #totalFrame = 0
   #targetFrame = 0
@@ -32,8 +31,6 @@ export class Player {
       return
     }
     this.#fps = Number(this.player.dataset.fps) || this.#fps
-    this.#timeFrame = Math.floor((1 / this.#fps) * 10000) / 10000 || this.#timeFrame
-
     this.#playerEvents()
   }
 
@@ -111,9 +108,8 @@ export class Player {
     this.player.addEventListener('loadedmetadata', () => {
       this.#isVideoLoad = true
 
-      this.#totalFrame = Math.floor(this.player.duration / this.#timeFrame)
-      this.#timeFrameArr = getTimeFrameArr(this.#totalFrame, this.#timeFrame);
-
+      this.#totalFrame = Math.floor(this.player.duration * this.#fps)
+      this.#timeFrameArr = getTimeFrameArr(this.#totalFrame, this.#fps);
       this.#render()
     })
   }
