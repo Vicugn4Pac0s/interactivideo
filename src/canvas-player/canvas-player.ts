@@ -2,7 +2,8 @@ import { findData, normalize } from '../helpers'
 import Observer from '../helpers/Observer'
 import { CanvasPlayerLoader } from './canvas-player-loader'
 import { createDefaultId } from '../helpers'
-import { CanvasPlayerData, CanvasPlayerFrame, LoaderOptions } from '../type'
+import { CanvasPlayerData, LoaderOptions } from '../type'
+import { drawFrame } from './canvas-player-utils'
 
 interface CanvasPlayerEvents {
 }
@@ -195,7 +196,7 @@ export class CanvasPlayer {
     if (!this.#currentData || !this.#currentData.frameData[frameNumber]) return
     this.#currentFrame = frameNumber
     this.#targetFrame = frameNumber
-    this.#drawFrame(this.#currentData.frameData[frameNumber])
+    drawFrame(this.ctx, this.#currentData.frameData[frameNumber].img)
   }
 
   /**
@@ -249,7 +250,8 @@ export class CanvasPlayer {
           const currentFrameData =
             this.#currentData?.frameData[this.#currentFrame]
           if (!currentFrameData || !currentFrameData.complete) return
-          this.#drawFrame(currentFrameData)
+          drawFrame(this.ctx, currentFrameData.img)
+          
           this.canvasDOM.style.opacity = '1'
         }, 500)
       }
@@ -299,7 +301,8 @@ export class CanvasPlayer {
 
     if (!nextFrameData || !nextFrameData.complete) return
 
-    this.#drawFrame(nextFrameData)
+    drawFrame(this.ctx, nextFrameData.img)
+    
     this.#currentFrame = nextFrame
 
     this.#observer.trigger('playing', {
@@ -312,20 +315,4 @@ export class CanvasPlayer {
     })
   }
 
-  #drawFrame(targetFrameData: CanvasPlayerFrame) {
-    if (!this.ctx) return
-    this.ctx.clearRect(
-      0,
-      0,
-      this.ctx.canvas.clientWidth,
-      this.ctx.canvas.clientHeight
-    )
-    this.ctx.drawImage(
-      targetFrameData.img,
-      0,
-      0,
-      this.ctx.canvas.clientWidth,
-      this.ctx.canvas.clientHeight
-    )
-  }
 }
