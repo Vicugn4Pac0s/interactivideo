@@ -1,4 +1,3 @@
-
 /**
  * 指定されたフレームを描画します。
  * @param {CanvasRenderingContext2D} ctx - キャンバスの2Dコンテキスト
