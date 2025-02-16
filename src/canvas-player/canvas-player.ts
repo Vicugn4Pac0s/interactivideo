@@ -3,7 +3,7 @@ import Observer from '../helpers/Observer'
 import { CanvasPlayerLoader } from './canvas-player-loader'
 import { createDefaultId } from '../helpers'
 import { CanvasPlayerData, LoaderOptions } from '../type'
-import { drawFrame } from './canvas-player-utils'
+import { drawFrame, getNextFrame } from './canvas-player-utils'
 
 interface CanvasPlayerEvents {
 }
@@ -220,17 +220,6 @@ export class CanvasPlayer {
     this.#targetFrame--
   }
 
-  #getNextFrame() {
-    let nextFrame = this.#targetFrame
-    const diff = nextFrame - this.#currentFrame
-    if (diff > 1) {
-      nextFrame = this.#currentFrame + 1
-    } else if (diff < -1) {
-      nextFrame = this.#currentFrame - 1
-    }
-    return nextFrame
-  }
-
   #setSize() {
     if (!this.ctx) return
     this.canvasDOM.height = this.ctx.canvas.clientHeight
@@ -300,7 +289,7 @@ export class CanvasPlayer {
     if (!this.#currentData) return
     if (this.#currentFrame === this.#targetFrame) return
 
-    const nextFrame = this.#getNextFrame()
+    const nextFrame = getNextFrame(this.#currentFrame, this.#targetFrame)
     const nextFrameData = this.#currentData.frameData[nextFrame]
 
     if (!nextFrameData || !nextFrameData.complete) return
