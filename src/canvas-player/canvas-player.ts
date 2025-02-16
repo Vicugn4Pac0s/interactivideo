@@ -12,6 +12,7 @@ interface CanvasPlayerEvents {
 // TODO: state管理のオブジェクト化
 // TODO: イベントコールバック関数の調整
 // TODO: data-srcからの取得ではなく、引数からの取得に
+// TODO: DOM操作外部クラス化検討
 export class CanvasPlayer {
   canvasDOM: HTMLCanvasElement
   ctx: CanvasRenderingContext2D | null = null
