@@ -1,6 +1,31 @@
 import Observer from "../helpers/Observer"
 import { getNextFrame, getTimeFrameArr } from "./player-utils"
 
+/**
+ * フレームの状態を表すインターフェースです。
+ */
+interface FrameState {
+  /**
+   * 現在のフレーム番号。
+   */
+  current: number;
+
+  /**
+   * 目標のフレーム番号。
+   */
+  target: number;
+
+  /**
+   * フレームの総数。
+   */
+  total: number;
+
+  /**
+   * タイムフレームの配列。
+   */
+  timeFrames: number[];
+}
+
 interface PlayerEvents {
   player: Player
 }
@@ -11,10 +36,12 @@ interface PlayerEvents {
 export class Player {
   player: HTMLVideoElement
   #fps = 15
-  #timeFrameArr: number[] = []
-  #totalFrame = 0
-  #targetFrame = 0
-  #currentFrame = -1
+  #frameState: FrameState = {
+    current: -1,
+    target: 0,
+    total: 0,
+    timeFrames: []
+  };
 
   #isVideoLoad = false
   #isSeeking = false
@@ -92,7 +119,7 @@ export class Player {
    */
   playWithProgress(progress: number) {
     if (!this.#isVideoLoad) return
-    this.#targetFrame = Math.floor(progress * this.#totalFrame)
+    this.#frameState.target = Math.floor(progress * this.#frameState.total)
   }
 
   /**
@@ -108,8 +135,8 @@ export class Player {
     this.player.addEventListener('loadedmetadata', () => {
       this.#isVideoLoad = true
 
-      this.#totalFrame = Math.floor(this.player.duration * this.#fps)
-      this.#timeFrameArr = getTimeFrameArr(this.#totalFrame, this.#fps);
+      this.#frameState.total = Math.floor(this.player.duration * this.#fps)
+      this.#frameState.timeFrames = getTimeFrameArr(this.#frameState.total, this.#fps);
       this.#render()
     })
   }
@@ -121,14 +148,14 @@ export class Player {
     requestAnimationFrame(this.#render.bind(this))
 
     if (this.#isSeeking) return
-    if (this.#currentFrame === this.#targetFrame) return
+    if (this.#frameState.current === this.#frameState.target) return
 
-    const nextFrame = getNextFrame(this.#currentFrame, this.#targetFrame);
-    if (!this.#timeFrameArr[nextFrame]) return
+    const nextFrame = getNextFrame(this.#frameState.current, this.#frameState.target);
+    if (!this.#frameState.timeFrames[nextFrame]) return
 
-    this.player.currentTime = this.#timeFrameArr[nextFrame]
+    this.player.currentTime = this.#frameState.timeFrames[nextFrame]
     this.player.pause()
-    this.#currentFrame = nextFrame
+    this.#frameState.current = nextFrame
 
     this.#observer.trigger('playing', {
       player: this
