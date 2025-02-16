@@ -1,7 +1,7 @@
 import Observer from "./helpers/Observer"
 
 interface PlayerEvents {
-  player: HTMLVideoElement
+  player: Player
 }
 
 /**
@@ -37,9 +37,19 @@ export class Player {
   }
 
   /**
-   * イベントリスナーを登録します。
-   * @param {string} eventName - イベント名。現在は"playing"イベントのみをサポートしています。
-   * @param {function} callback - コールバック関数
+   * 指定されたイベント名のイベントリスナーを登録します。
+   *
+   * @param {string} eventName - リッスンするイベントの名前。現在は"playing"のみサポートされています。
+   * @param {function} callback - イベントがトリガーされたときに呼び出される関数。コールバックは`PlayerEvents`オブジェクトを引数として受け取ります。
+   *
+   * @example
+   * ```typescript
+   * player.on('playing', (data) => {
+   *   console.log('プレーヤーが再生中です:', data);
+   * });
+   * ```
+   *
+   * @throws サポートされていないイベント名の場合はエラーをスローします。
    */
   on(eventName: string, callback: (data: PlayerEvents) => void) {
     switch (eventName) {
@@ -56,15 +66,16 @@ export class Player {
   }
 
   /**
-   * 動画データを読み込みます。
+   * 指定されたソースURLからビデオを読み込み、プレーヤーのソースとして設定します。
+   * 
+   * @param src - 読み込むビデオのURL。
+   * 
+   * このメソッドは、XMLHttpRequestを使用してビデオをblobとして取得し、
+   * そのblobからオブジェクトURLを作成してビデオプレーヤーのソースとして設定します。
    */
-  load() {
-    let videoSrc = this.player.dataset.src || ''
-    if (window.innerWidth < 768) {
-      videoSrc = this.player.dataset.src_sp || this.player.dataset.src || ''
-    }
+  load(src: string) {
     const xhr = new XMLHttpRequest()
-    xhr.open('GET', videoSrc, true)
+    xhr.open('GET', src, true)
     xhr.responseType = 'blob'
     xhr.onload = (e) => {
       const target = e.currentTarget as XMLHttpRequest;
@@ -158,7 +169,7 @@ export class Player {
     this.#currentFrame = nextFrame
 
     this.#observer.trigger('playing', {
-      player: this.player
+      player: this
     })
   }
 }

@@ -5,7 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const ivPlayer = new Interactivideo.Player("iv-player");
-ivPlayer.load();
+ivPlayer.load('./sample.mp4');
 
 const ivCanvasPlayer = new Interactivideo.CanvasPlayer("iv-canvas-player");
 ivCanvasPlayer.load();
