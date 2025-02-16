@@ -37,7 +37,7 @@ export const normalize = (value: number, minValue: number, maxValue: number) => 
 }
 
 /**
- * 指定された数字を指定された桁数になるようにゼロパディングします。
+//  * 指定された数字を指定された桁数になるようにゼロパディングします。
  *
  * @param {number} number - ゼロパディングする数字
  * @param {number} length - 桁数
@@ -56,3 +56,29 @@ export const zeroPadding = (number: number, length: number) => {
     return str
   }
 }
+
+/**
+ * デフォルトのIDを生成する関数。
+ * 
+ * @remarks
+ * この関数は即時実行関数として定義されており、内部でカウントを保持します。
+ * 呼び出されるたびにカウントがインクリメントされ、ベース名とゼロパディングされたカウントを組み合わせたIDを返します。
+ * 
+ * @param baseName - IDのベースとなる名前。デフォルトは 'default'。
+ * @returns 生成されたID文字列。
+ * 
+ * @example
+ * ```typescript
+ * const id1 = createDefaultId(); // 'default-000'
+ * const id2 = createDefaultId(); // 'default-001'
+ * const id3 = createDefaultId('custom'); // 'custom-002'
+ * ```
+ */
+export const createDefaultId = (() => {
+  let count = 0;
+  return (baseName = 'default') => {
+    const id = `${baseName}-${zeroPadding(count, 3)}`;
+    count++;
+    return id;
+  };
+})();
