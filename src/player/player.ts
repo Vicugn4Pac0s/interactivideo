@@ -26,6 +26,18 @@ interface FrameState {
   timeFrames: number[];
 }
 
+interface PlayerState {
+  /**
+   * ビデオが読み込まれているかどうか。
+   */
+  isVideoLoad: boolean;
+
+  /**
+   * シーク中かどうか。
+   */
+  isSeeking: boolean;
+}
+
 interface PlayerEvents {
   player: Player
 }
@@ -42,9 +54,10 @@ export class Player {
     total: 0,
     timeFrames: []
   };
-
-  #isVideoLoad = false
-  #isSeeking = false
+  #playerState: PlayerState = {
+    isVideoLoad: false,
+    isSeeking: false
+  }
   #observer = new Observer<PlayerEvents>()
 
   /**
@@ -118,7 +131,7 @@ export class Player {
    * @param {number} progress - 進捗率
    */
   playWithProgress(progress: number) {
-    if (!this.#isVideoLoad) return
+    if (!this.#playerState.isVideoLoad) return
     this.#frameState.target = Math.floor(progress * this.#frameState.total)
   }
 
@@ -127,13 +140,13 @@ export class Player {
    */
   #playerEvents() {
     this.player.addEventListener('seeking', () => {
-      this.#isSeeking = true
+      this.#playerState.isSeeking = true
     })
     this.player.addEventListener('seeked', () => {
-      this.#isSeeking = false
+      this.#playerState.isSeeking = false
     })
     this.player.addEventListener('loadedmetadata', () => {
-      this.#isVideoLoad = true
+      this.#playerState.isVideoLoad = true
 
       this.#frameState.total = Math.floor(this.player.duration * this.#fps)
       this.#frameState.timeFrames = getTimeFrameArr(this.#frameState.total, this.#fps);
@@ -147,7 +160,7 @@ export class Player {
   #render() {
     requestAnimationFrame(this.#render.bind(this))
 
-    if (this.#isSeeking) return
+    if (this.#playerState.isSeeking) return
     if (this.#frameState.current === this.#frameState.target) return
 
     const nextFrame = getNextFrame(this.#frameState.current, this.#frameState.target);
