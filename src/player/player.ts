@@ -1,4 +1,5 @@
 import Observer from "../helpers/Observer"
+import { getNextFrame, getTimeFrameArr } from "./player-utils"
 
 interface PlayerEvents {
   player: Player
@@ -12,7 +13,7 @@ export class Player {
   #fps = 15
   #timeFrame = 0.0666
   #timeFrameArr: number[] = []
-  #countFrame = 0
+  #totalFrame = 0
   #targetFrame = 0
   #currentFrame = -1
 
@@ -94,42 +95,7 @@ export class Player {
    */
   playWithProgress(progress: number) {
     if (!this.#isVideoLoad) return
-    this.#targetFrame = Math.floor(progress * this.#countFrame)
-  }
-
-  /**
-   * 次のフレームを取得します。
-   * @returns {number} - 次のフレームのインデックス
-   */
-  #getNextFrame() {
-    let nextFrame = this.#targetFrame
-    const diff = nextFrame - this.#currentFrame
-    if (diff > 1) {
-      if (diff > 10) {
-        nextFrame = this.#currentFrame + 2
-      } else {
-        nextFrame = this.#currentFrame + 1
-      }
-    } else if (diff < -1) {
-      if (diff < -10) {
-        nextFrame = this.#currentFrame - 2
-      } else {
-        nextFrame = this.#currentFrame - 1
-      }
-    }
-    return nextFrame
-  }
-
-  /**
-   * タイムフレームの配列を取得します。
-   * @returns {number[]} - タイムフレームの配列
-   */
-  #getTimeFrameArr() {
-    const timeFrameArr = []
-    for (let i = 0; i < this.#countFrame; i++) {
-      timeFrameArr.push(this.#timeFrame * i)
-    }
-    return timeFrameArr
+    this.#targetFrame = Math.floor(progress * this.#totalFrame)
   }
 
   /**
@@ -145,8 +111,8 @@ export class Player {
     this.player.addEventListener('loadedmetadata', () => {
       this.#isVideoLoad = true
 
-      this.#countFrame = Math.floor(this.player.duration / this.#timeFrame)
-      this.#timeFrameArr = this.#getTimeFrameArr()
+      this.#totalFrame = Math.floor(this.player.duration / this.#timeFrame)
+      this.#timeFrameArr = getTimeFrameArr(this.#totalFrame, this.#timeFrame);
 
       this.#render()
     })
@@ -161,7 +127,7 @@ export class Player {
     if (this.#isSeeking) return
     if (this.#currentFrame === this.#targetFrame) return
 
-    const nextFrame = this.#getNextFrame()
+    const nextFrame = getNextFrame(this.#currentFrame, this.#targetFrame);
     if (!this.#timeFrameArr[nextFrame]) return
 
     this.player.currentTime = this.#timeFrameArr[nextFrame]
