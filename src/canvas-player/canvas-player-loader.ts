@@ -1,6 +1,6 @@
-import { normalize, zeroPadding } from './helpers'
-import Semaphore from './helpers/Semaphore'
-import { CanvasPlayerFrame } from './type'
+import { normalize, zeroPadding } from '../helpers'
+import Semaphore from '../helpers/Semaphore'
+import { CanvasPlayerFrame } from '../type'
 
 export class CanvasPlayerLoader {
   id: string

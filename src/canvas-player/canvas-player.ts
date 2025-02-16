@@ -1,8 +1,8 @@
-import { findData, normalize } from './helpers'
-import Observer from './helpers/Observer'
+import { findData, normalize } from '../helpers'
+import Observer from '../helpers/Observer'
 import { CanvasPlayerLoader } from './canvas-player-loader'
-import { createDefaultId } from './helpers/'
-import { CanvasPlayerData, CanvasPlayerFrame, LoaderOptions } from './type'
+import { createDefaultId } from '../helpers'
+import { CanvasPlayerData, CanvasPlayerFrame, LoaderOptions } from '../type'
 
 interface CanvasPlayerEvents {
 }

@@ -1,4 +1,4 @@
-import Observer from "./helpers/Observer"
+import Observer from "../helpers/Observer"
 
 interface PlayerEvents {
   player: Player
