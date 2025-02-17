@@ -29,20 +29,16 @@ export class FrameController {
       ...options };
   }
 
-  /**
-   * 次のフレームに進みます。
-   */
-  #nextFrame() {
-    if (this.frameState.target >= this.frameState.total) return;
-    this.frameState.target++;
-  }
-
-  /**
-   * 前のフレームに戻ります。
-   */
-  #prevFrame() {
-    if (this.frameState.target < 0) return;
-    this.frameState.target--;
+  getNextFrame = () => {
+    const { current, target } = this.frameState
+    let nextFrame = target
+    const diff = nextFrame - current
+    if (diff > 1) {
+      nextFrame = current + 1
+    } else if (diff < -1) {
+      nextFrame = current - 1
+    }
+    return nextFrame
   }
 
   changeFrame() {
@@ -66,5 +62,21 @@ export class FrameController {
       this.#prevFrame();
     }
     return true;
+  }
+
+  /**
+   * 次のフレームに進みます。
+   */
+  #nextFrame() {
+    if (this.frameState.target >= this.frameState.total) return;
+    this.frameState.target++;
+  }
+
+  /**
+   * 前のフレームに戻ります。
+   */
+  #prevFrame() {
+    if (this.frameState.target < 0) return;
+    this.frameState.target--;
   }
 }

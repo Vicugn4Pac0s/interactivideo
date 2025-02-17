@@ -3,7 +3,7 @@ import Observer from '../helpers/Observer'
 import { CanvasPlayerLoader } from './canvas-player-loader'
 import { createDefaultId } from '../helpers'
 import { CanvasPlayerData, LoaderOptions } from '../type'
-import { drawFrame, getNextFrame } from './canvas-player-utils'
+import { drawFrame } from './canvas-player-utils'
 import { FrameController } from './frame-controller'
 
 interface CanvasPlayerEvents {
@@ -240,7 +240,7 @@ export class CanvasPlayer {
     if (!this.#currentData) return
     if (this.#frameController.frameState.current === this.#frameController.frameState.target) return
 
-    const nextFrame = getNextFrame(this.#frameController.frameState.current, this.#frameController.frameState.target)
+    const nextFrame = this.#frameController.getNextFrame()
     const nextFrameData = this.#currentData.frameData[nextFrame]
 
     if (!nextFrameData || !nextFrameData.complete) return
