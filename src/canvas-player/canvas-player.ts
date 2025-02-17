@@ -4,6 +4,7 @@ import { CanvasPlayerLoader } from './canvas-player-loader'
 import { createDefaultId } from '../helpers'
 import { CanvasPlayerData, LoaderOptions } from '../type'
 import { drawFrame, getNextFrame } from './canvas-player-utils'
+import { FrameController } from './frame-controller'
 
 interface CanvasPlayerEvents {
 }
@@ -20,10 +21,9 @@ export class CanvasPlayer {
   #data: CanvasPlayerData[] = []
   #currentData: CanvasPlayerData | null = null
 
-  #targetFrame = 0
-  #currentFrame = -1
   #playState = 0
 
+  #frameController = new FrameController();
   #observer = new Observer<CanvasPlayerEvents>()
 
   /**
@@ -59,15 +59,6 @@ export class CanvasPlayer {
    */
   getVideoIds() {
     return this.#data.map((e) => e.id)
-  }
-
-  /**
-   * 現在の動画のフレーム枚数を返します。
-   * @returns {number}
-   */
-  getImgCount() {
-    if (!this.#currentData) return
-    return this.#currentData.imgCount
   }
 
   /**
@@ -152,7 +143,7 @@ export class CanvasPlayer {
    */
   playWithProgress(progress: number) {
     if (this.#playState || this.#currentData === null) return
-    this.#targetFrame = Math.floor((progress / this.#currentData.rate) * 100)
+    this.#frameController.frameState.target = Math.floor((progress / this.#currentData.rate) * 100)
   }
 
   /**
@@ -164,8 +155,7 @@ export class CanvasPlayer {
     if (!currentData) return
 
     this.#currentData = currentData
-    this.#targetFrame = 0
-    this.#currentFrame = -1
+    this.#frameController.set(currentData.imgCount)
 
     this.pause()
   }
@@ -183,7 +173,8 @@ export class CanvasPlayer {
   play(options = {}) {
     if (this.#playState === 1) return
     this.#playState = 1
-    this.#moveFrame(options)
+    this.#frameController.setFrameOptions(options)
+    this.#moveFrame()
   }
 
   /**
@@ -199,26 +190,9 @@ export class CanvasPlayer {
    */
   seekTo(frameNumber = 0) {
     if (!this.#currentData || !this.#currentData.frameData[frameNumber]) return
-    this.#currentFrame = frameNumber
-    this.#targetFrame = frameNumber
+    this.#frameController.frameState.current = frameNumber
+    this.#frameController.frameState.target = frameNumber
     drawFrame(this.ctx, this.#currentData.frameData[frameNumber].img)
-  }
-
-  /**
-   * 次のフレームに進みます。
-   */
-  nextFrame() {
-    if (!this.#currentData) return
-    if (this.#targetFrame >= this.#currentData.imgCount - 1) return
-    this.#targetFrame++
-  }
-
-  /**
-   * 前のフレームに戻ります。
-   */
-  prevFrame() {
-    if (this.#targetFrame < 0) return
-    this.#targetFrame--
   }
 
   #setSize() {
@@ -242,7 +216,7 @@ export class CanvasPlayer {
           }
           this.#setSize()
           const currentFrameData =
-            this.#currentData?.frameData[this.#currentFrame]
+            this.#currentData?.frameData[this.#frameController.frameState.current]
           if (!currentFrameData || !currentFrameData.complete) return
           drawFrame(this.ctx, currentFrameData.img)
           
@@ -253,56 +227,32 @@ export class CanvasPlayer {
     })
   }
 
-  #moveFrame(options: {
-    reverse?: boolean
-    loop?: boolean
-  }) {
+  #moveFrame() {
     if (!this.#currentData) return
-    let stopIndex = this.#currentData.imgCount - 1
-    if (options.reverse) {
-      stopIndex = 0
-    }
-
-    // if (this.#currentData.loadProgress < 0.5) return
-    if (this.#playState === 0) return
-    if (stopIndex === this.#targetFrame) {
-      if (options.loop) {
-        const nextIndex = options.reverse ? this.#currentData.imgCount - 1 : 0
-        this.#currentFrame = nextIndex
-        this.#targetFrame = nextIndex
-      } else {
-        this.#playState = 0
-        return
-      }
-    }
-
-    if (stopIndex > this.#targetFrame) {
-      this.nextFrame()
-    } else {
-      this.prevFrame()
-    }
-    requestAnimationFrame(this.#moveFrame.bind(this, options))
+    if (!this.#playState) return
+    this.#playState = this.#frameController.changeFrame() ? 1: 0;
+    requestAnimationFrame(this.#moveFrame.bind(this))
   }
 
   #render() {
     requestAnimationFrame(this.#render.bind(this))
 
     if (!this.#currentData) return
-    if (this.#currentFrame === this.#targetFrame) return
+    if (this.#frameController.frameState.current === this.#frameController.frameState.target) return
 
-    const nextFrame = getNextFrame(this.#currentFrame, this.#targetFrame)
+    const nextFrame = getNextFrame(this.#frameController.frameState.current, this.#frameController.frameState.target)
     const nextFrameData = this.#currentData.frameData[nextFrame]
 
     if (!nextFrameData || !nextFrameData.complete) return
 
     drawFrame(this.ctx, nextFrameData.img)
     
-    this.#currentFrame = nextFrame
+    this.#frameController.frameState.current = nextFrame
 
     this.#observer.trigger('playing', {
       videoId: this.#currentData.id,
       playProgress: normalize(
-        this.#currentFrame,
+        this.#frameController.frameState.current,
         0,
         this.#currentData.imgCount - 1
       )
