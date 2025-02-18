@@ -1,5 +1,5 @@
-import { Player } from './player'
-import { CanvasPlayer } from './canvas-player'
+import { Player } from './Player'
+import { CanvasPlayer } from './CanvasPlayer'
 import { normalize } from './helpers'
 
 const utils = {
