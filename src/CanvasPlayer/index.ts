@@ -8,27 +8,22 @@ import { FrameController } from './FrameController';
 interface CanvasPlayerEvents {}
 
 export class CanvasPlayer {
+  playState = false;
   #data: CanvasPlayerData[] = [];
   #currentData: CanvasPlayerData | null = null;
-  #playState = 0;
+  #canvasManager: CanvasManager;
   #frameController = new FrameController();
   #observer = new Observer<CanvasPlayerEvents>();
-  #canvasManager: CanvasManager;
 
   constructor(id: string) {
     this.#canvasManager = new CanvasManager(id);
     if (!this.#canvasManager.ctx) return;
 
     this.#canvasManager.onResize(() => {
-      if (!this.#currentData) return;
       const currentFrameData = this.#currentData?.frameData[this.#frameController.frameState.current];
       if (!currentFrameData || !currentFrameData.complete) return;
       this.#canvasManager.drawFrame(currentFrameData.img);
     });
-  }
-
-  getPlayState() {
-    return this.#playState;
   }
 
   getVideoIds() {
@@ -56,12 +51,6 @@ export class CanvasPlayer {
     if (findData(id, this.#data)) return;
 
     let imgDir = options.imgDir || this.#canvasManager.canvasDOM.dataset.img_dir || '';
-    if (window.innerWidth < 768) {
-      imgDir =
-        options.imgDir ||
-        this.#canvasManager.canvasDOM.dataset.img_dir_sp ||
-        this.#canvasManager.canvasDOM.dataset.img_dir || '';
-    }
     const imgExt = options.imgExt || this.#canvasManager.canvasDOM.dataset.img_ext || 'jpg';
     const imgCount =
       options.imgCount || Number(this.#canvasManager.canvasDOM.dataset.img_count) || 0;
@@ -91,7 +80,7 @@ export class CanvasPlayer {
   }
 
   playWithProgress(progress: number) {
-    if (this.#playState || this.#currentData === null) return;
+    if (this.playState || this.#currentData === null) return;
     this.#frameController.frameState.target = Math.floor((progress / this.#currentData.rate) * 100);
   }
 
@@ -106,14 +95,14 @@ export class CanvasPlayer {
   }
 
   play(options = {}) {
-    if (this.#playState === 1) return;
-    this.#playState = 1;
+    if (this.playState) return;
+    this.playState = true;
     this.#frameController.setFrameOptions(options);
     this.#moveFrame();
   }
 
   pause() {
-    this.#playState = 0;
+    this.playState = false;
   }
 
   seekTo(frameNumber = 0) {
@@ -125,8 +114,8 @@ export class CanvasPlayer {
 
   #moveFrame() {
     if (!this.#currentData) return;
-    if (!this.#playState) return;
-    this.#playState = this.#frameController.changeFrame() ? 1 : 0;
+    if (!this.playState) return;
+    this.playState = this.#frameController.changeFrame();
     requestAnimationFrame(this.#moveFrame.bind(this));
   }
 
