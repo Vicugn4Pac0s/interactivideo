@@ -1,4 +1,4 @@
-import { Player } from './player/player'
+import { Player } from './player'
 import { CanvasPlayer } from './canvas-player'
 import { normalize } from './helpers'
 

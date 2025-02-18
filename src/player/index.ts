@@ -1,5 +1,5 @@
 import Observer from "../helpers/Observer"
-import { getNextFrame, getTimeFrameArr } from "./player-utils"
+import { getNextFrame, getTimeFrameArr } from "./utils"
 
 /**
  * フレームの状態を表すインターフェースです。
