@@ -1,8 +1,8 @@
+import { CanvasPlayerFrame } from '../type'
 import { normalize, zeroPadding } from '../helpers'
 import Semaphore from '../helpers/Semaphore'
-import { CanvasPlayerFrame } from '../type'
 
-export class CanvasPlayerLoader {
+export class FrameLoader {
   id: string
   imgDir: string
   imgExt: string

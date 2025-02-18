@@ -1,10 +1,9 @@
-import { findData, normalize } from '../helpers';
-import Observer from '../helpers/Observer';
-import { CanvasPlayerLoader } from './canvas-player-loader';
-import { createDefaultId } from '../helpers';
 import { CanvasPlayerData, LoaderOptions } from '../type';
-import { FrameController } from './frame-controller';
+import { findData, normalize, createDefaultId } from '../helpers';
+import Observer from '../helpers/Observer';
 import { CanvasManager } from './CanvasManager';
+import { FrameLoader } from './FrameLoader';
+import { FrameController } from './FrameController';
 
 interface CanvasPlayerEvents {}
 
@@ -75,7 +74,7 @@ export class CanvasPlayer {
       imgCount,
       fps,
     };
-    const loader = new CanvasPlayerLoader(opts);
+    const loader = new FrameLoader(opts);
     loader.load(() => {
       this.#observer.trigger('loaded', {
         videoId: opts.id,
