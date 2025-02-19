@@ -20,7 +20,7 @@ export class CanvasPlayer {
     if (!this.#canvasManager.ctx) return;
 
     this.#canvasManager.onResize(() => {
-      const currentFrameData = this.#currentData?.frameData[this.#frameController.frameState.current];
+      const currentFrameData = this.#currentData?.frameData[this.#frameController.currentFrame];
       if (!currentFrameData || !currentFrameData.complete) return;
       this.#canvasManager.drawFrame(currentFrameData.img);
     });
@@ -50,18 +50,13 @@ export class CanvasPlayer {
     const id = options.id || createDefaultId();
     if (findData(id, this.#data)) return;
 
-    let imgDir = options.imgDir || this.#canvasManager.canvasDOM.dataset.img_dir || '';
-    const imgExt = options.imgExt || this.#canvasManager.canvasDOM.dataset.img_ext || 'jpg';
-    const imgCount =
-      options.imgCount || Number(this.#canvasManager.canvasDOM.dataset.img_count) || 0;
-    const fps = options.fps || Number(this.#canvasManager.canvasDOM.dataset.fps) || 30;
-
     const opts = {
       id,
-      imgDir,
-      imgExt,
-      imgCount,
-      fps,
+      imgDir: '',
+      imgExt: 'jpg',
+      imgCount: 0,
+      fps: 30,
+      ...options
     };
     const loader = new FrameLoader(opts);
     loader.load(() => {
@@ -81,7 +76,8 @@ export class CanvasPlayer {
 
   playWithProgress(progress: number) {
     if (this.playState || this.#currentData === null) return;
-    this.#frameController.frameState.target = Math.floor((progress / this.#currentData.rate) * 100);
+    const targetFrame = Math.floor(progress * this.#currentData.imgCount);
+    this.#frameController.targetFrame = targetFrame;
   }
 
   changeCurrentData(id: string) {
@@ -89,7 +85,7 @@ export class CanvasPlayer {
     if (!currentData) return;
 
     this.#currentData = currentData;
-    this.#frameController.set(currentData.imgCount);
+    this.#frameController.setFrame(currentData.imgCount);
 
     this.pause();
   }
@@ -107,8 +103,8 @@ export class CanvasPlayer {
 
   seekTo(frameNumber = 0) {
     if (!this.#currentData || !this.#currentData.frameData[frameNumber]) return;
-    this.#frameController.frameState.current = frameNumber;
-    this.#frameController.frameState.target = frameNumber;
+    this.#frameController.currentFrame = frameNumber;
+    this.#frameController.targetFrame = frameNumber;
     this.#canvasManager.drawFrame(this.#currentData.frameData[frameNumber].img);
   }
 
@@ -123,7 +119,7 @@ export class CanvasPlayer {
     requestAnimationFrame(this.#render.bind(this));
 
     if (!this.#currentData) return;
-    if (this.#frameController.frameState.current === this.#frameController.frameState.target) return;
+    if (this.#frameController.currentFrame === this.#frameController.targetFrame) return;
 
     const nextFrame = this.#frameController.getNextFrame();
     const nextFrameData = this.#currentData.frameData[nextFrame];
@@ -132,12 +128,12 @@ export class CanvasPlayer {
 
     this.#canvasManager.drawFrame(nextFrameData.img);
 
-    this.#frameController.frameState.current = nextFrame;
+    this.#frameController.currentFrame = nextFrame;
 
     this.#observer.trigger('playing', {
       videoId: this.#currentData.id,
       playProgress: normalize(
-        this.#frameController.frameState.current,
+        this.#frameController.currentFrame,
         0,
         this.#currentData.imgCount - 1
       ),

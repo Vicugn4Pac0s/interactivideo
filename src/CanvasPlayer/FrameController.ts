@@ -4,7 +4,7 @@ interface FrameOptions {
 }
 
 export class FrameController {
-  frameState = {
+  #frameState = {
     current: -1,
     target: 0,
     total: 0
@@ -14,11 +14,27 @@ export class FrameController {
     loop: false,
   };
 
-  set(totalFrames: number) {
-    this.frameState = {
+  set currentFrame(frame: number) {
+    this.#frameState.current = frame;
+  }
+
+  get currentFrame() {
+    return this.#frameState.current;
+  }
+
+  set targetFrame(frame: number) {
+    this.#frameState.target = frame;
+  }
+
+  get targetFrame() {
+    return this.#frameState.target;
+  }
+
+  setFrame(frames: number) {
+    this.#frameState = {
       current: -1,
       target: 0,
-      total: totalFrames
+      total: frames
     };
   }
 
@@ -30,7 +46,7 @@ export class FrameController {
   }
 
   getNextFrame = () => {
-    const { current, target } = this.frameState
+    const { current, target } = this.#frameState
     let nextFrame = target
     const diff = nextFrame - current
     if (diff > 1) {
@@ -44,19 +60,19 @@ export class FrameController {
   changeFrame() {
     const { reverse, loop } = this.#frameOptions;
     const [firstIndex, lastIndex] = reverse
-      ? [this.frameState.total - 1, 0]
-      : [0, this.frameState.total - 1];
-    const isLastFrame = this.frameState.current === lastIndex;
+      ? [this.#frameState.total - 1, 0]
+      : [0, this.#frameState.total - 1];
+    const isLastFrame = this.#frameState.current === lastIndex;
 
     if (isLastFrame) {
       if (!loop) {
         return false;
       }
-      this.frameState.current = firstIndex;
-      this.frameState.target = firstIndex;
+      this.#frameState.current = firstIndex;
+      this.#frameState.target = firstIndex;
     }
 
-    if (lastIndex > this.frameState.target) {
+    if (lastIndex > this.#frameState.target) {
       this.#nextFrame();
     } else {
       this.#prevFrame();
@@ -68,15 +84,15 @@ export class FrameController {
    * 次のフレームに進みます。
    */
   #nextFrame() {
-    if (this.frameState.target >= this.frameState.total) return;
-    this.frameState.target++;
+    if (this.#frameState.target >= this.#frameState.total) return;
+    this.#frameState.target++;
   }
 
   /**
    * 前のフレームに戻ります。
    */
   #prevFrame() {
-    if (this.frameState.target < 0) return;
-    this.frameState.target--;
+    if (this.#frameState.target < 0) return;
+    this.#frameState.target--;
   }
 }
