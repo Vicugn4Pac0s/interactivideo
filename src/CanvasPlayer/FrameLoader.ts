@@ -2,49 +2,46 @@ import { CanvasPlayerFrame } from '../type'
 import { normalize, zeroPadding } from '../helpers'
 import Semaphore from '../helpers/Semaphore'
 
+interface FrameLoaderOptions {
+  id: string
+  extension: 'jpg' | 'png' | 'webp';
+  totalFrames: number,
+  callback?: () => void
+}
+
 // TODO; コンストラクタでディレクトリの設定を
 // TODO: {id}-{拡張子}-{フレーム数}の形式にし、不要なオプションを削除する
 // TODO: フレームのロードを非同期にする
 // TODO: インスタンスは一つで完結するようにする
 export class FrameLoader {
-  id: string
-  imgDir: string
-  imgExt: string
-  imgCount: number
-  rate: number
+  dir: string
 
   #semaphore = new Semaphore()
 
   constructor(options: {
-    id: string
-    imgDir: string
-    imgExt: string
-    imgCount: number
+    dir: string
   }) {
-    this.id = options.id
-    this.imgDir = options.imgDir
-    this.imgExt = options.imgExt
-    this.imgCount = options.imgCount
-    this.rate = normalize(1, 0, this.imgCount) * 100
+    this.dir = options.dir
   }
 
-  load(callback?: () => void) {
+  load(options: FrameLoaderOptions) {
     const frameData: CanvasPlayerFrame[] = []
-    for (let i = 0; i < this.imgCount; i++) {
-      this.#loadImg(i, frameData, callback)
+    for (let i = 0; i < options.totalFrames; i++) {
+      this.#loadImg(i, frameData, options)
     }
     return {
-      id: this.id,
-      totalFrames: this.imgCount,
+      id: options.id,
+      totalFrames: options.totalFrames,
       frameData: frameData,
     }
   }
 
-  async #loadImg(i: number, frameData: CanvasPlayerFrame[], callback?: () => void) {
+  async #loadImg(i: number, frameData: CanvasPlayerFrame[], options: FrameLoaderOptions) {
     const release = await this.#semaphore.enter()
 
     const id = zeroPadding(i, 4)
-    const imgPath = this.imgDir + id + '.' + this.imgExt
+    const imgPath = `${this.dir}${options.id}/${id}.${options.extension}`
+    console.log(imgPath)
     const frame = {
       id,
       img: new Image(),
@@ -54,9 +51,9 @@ export class FrameLoader {
     frame.img.onload = () => {
       frame.complete = true
       const loadedFrameCount = frameData.filter(frame => frame.complete).length;
-      const loadProgress = normalize(loadedFrameCount, 0 , this.imgCount)
+      const loadProgress = normalize(loadedFrameCount, 0 , options.totalFrames)
       if (loadProgress === 1) {
-        callback?.();
+        options.callback?.();
       }
       release()
     }

@@ -1,12 +1,19 @@
-import { CanvasPlayerData, LoaderOptions } from '../type';
-import { findData, normalize, createDefaultId } from '../helpers';
+import { CanvasPlayerData } from '../type';
+import { findData, normalize } from '../helpers';
 import Observer from '../helpers/Observer';
 import { CanvasManager } from './CanvasManager';
 import { FrameLoader } from './FrameLoader';
 import { FrameController } from './FrameController';
 
 interface CanvasPlayerOptions {
+  dir?: string;
   fps?: number;
+}
+
+interface LoaderOptions {
+  id: string;
+  extension?: 'jpg' | 'png' | 'webp';
+  totalFrames: number,
 }
 
 interface CanvasPlayerEvents {}
@@ -16,11 +23,13 @@ export class CanvasPlayer {
   #currentData: CanvasPlayerData | null = null;
   #playState = false;
   #canvasManager: CanvasManager;
+  #frameLoader: FrameLoader;
   #frameController = new FrameController();
   #observer = new Observer<CanvasPlayerEvents>();
 
   constructor(id: string, options?: CanvasPlayerOptions) {
     this.#canvasManager = new CanvasManager(id);
+    this.#frameLoader = new FrameLoader({ dir: options?.dir || '/frames/' });
     this.#frameController.setFPS(options?.fps || 30);
     if (!this.#canvasManager.ctx) return;
 
@@ -51,28 +60,24 @@ export class CanvasPlayer {
     }
   }
 
-  load(options: LoaderOptions = {}) {
-    const id = options.id || createDefaultId();
-    if (findData(id, this.#data)) return;
+  load(options: LoaderOptions) {
+    if (findData(options.id, this.#data)) return;
 
-    const opts = {
-      id,
-      imgDir: '',
-      imgExt: 'jpg',
-      imgCount: 0,
-      ...options
-    };
-    const loader = new FrameLoader(opts);
-    const data = loader.load(() => {
-      this.#observer.trigger('loaded', {
-        videoId: opts.id,
-      });
+    const data = this.#frameLoader.load({
+      id: options.id,
+      extension: options.extension || 'webp',
+      totalFrames: options.totalFrames,
+      callback: () => {
+        this.#observer.trigger('loaded', {
+          videoId: options.id,
+        });
+      }
     });
 
     this.#data.push(data);
 
     if (this.#currentData === null) {
-      this.changeCurrentData(opts.id);
+      this.changeCurrentData(options.id);
       this.#refreshFrame();
     }
   }

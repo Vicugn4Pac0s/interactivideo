@@ -9,14 +9,16 @@ const ivPlayer = new Interactivideo.Player("iv-player", {
 });
 ivPlayer.load('./sample.mp4');
 
-const ivCanvasPlayer = new Interactivideo.CanvasPlayer("iv-canvas-player");
+const ivCanvasPlayer = new Interactivideo.CanvasPlayer("iv-canvas-player", {
+  dir: '/interactivideo-data/',
+});
 ivCanvasPlayer.load({
-  imgCount: 45,
-  imgDir: '/interactivideo-data/airpodspro-webp/',
-  imgExt: 'webp',
+  id: 'airpodspro-webp',
+  totalFrames: 45,  
 });
 
 const ivCanvasPlayer02 = new Interactivideo.CanvasPlayer("iv-canvas-player02", {
+  dir: '/interactivideo-data/',
   fps: 60
 });
 
@@ -67,9 +69,8 @@ pauseBtn.style.display = 'none';
 
 loadBtn.addEventListener('click', ()=> {
   ivCanvasPlayer02.load({
-    imgCount: 45,
-    imgDir: '/interactivideo-data/airpodspro-webp/',
-    imgExt: 'webp',
+    id: 'airpodspro-webp',
+    totalFrames: 45,
   })
   loadBtn.style.display = 'none';
   playBtn.style.display = 'inline-flex';

@@ -9,10 +9,3 @@ export interface CanvasPlayerFrame {
   img: HTMLImageElement;
   complete: boolean;
 }
-
-export interface LoaderOptions {
-  id?: string;
-  imgDir?: string;
-  imgExt?: string;
-  imgCount?: number;
-}
