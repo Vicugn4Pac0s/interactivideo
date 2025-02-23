@@ -1,6 +1,13 @@
-import { FrameData, FrameLoaderOptions } from './type'
 import { normalize, zeroPadding } from '../helpers'
 import Semaphore from '../helpers/Semaphore'
+import { FrameData } from '.'
+
+interface FrameLoaderOptions {
+  id: string
+  extension: 'jpg' | 'png' | 'webp';
+  totalFrames: number,
+  callback?: () => void
+}
 
 export class FrameLoader {
   dir: string

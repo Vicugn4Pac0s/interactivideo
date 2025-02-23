@@ -1,4 +1,4 @@
-import { FrameControllerOptions } from "./type";
+import { FrameControllerOptions } from ".";
 
 export class FrameController {
   #lastFrameTime = performance.now();

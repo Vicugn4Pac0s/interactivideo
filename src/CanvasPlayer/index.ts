@@ -1,12 +1,39 @@
-import { CanvasPlayerData, CanvasPlayerLoaderOptions, CanvasPlayerOptions, FrameControllerOptions } from './type';
 import { findData, normalize } from '../helpers';
 import Observer from '../helpers/Observer';
 import { CanvasManager } from './CanvasManager';
 import { FrameLoader } from './FrameLoader';
 import { FrameController } from './FrameController';
 
+export interface FrameData {
+  id: string;
+  img: HTMLImageElement;
+  complete: boolean;
+}
+
+interface CanvasPlayerData {
+  id: string;
+  frameData: FrameData[];
+  totalFrames: number;
+}
+
+interface CanvasPlayerOptions {
+  dir?: string;
+  fps?: number;
+}
+
 interface CanvasPlayerEvents {
   player: CanvasPlayer;
+}
+
+interface CanvasPlayerLoaderOptions {
+  id: string;
+  extension?: 'jpg' | 'png' | 'webp';
+  totalFrames: number,
+}
+
+export interface FrameControllerOptions {
+  reverse?: boolean;
+  loop?: boolean;
 }
 
 export class CanvasPlayer {
