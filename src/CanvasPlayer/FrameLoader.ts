@@ -13,7 +13,6 @@ export class FrameLoader {
   imgCount: number
   rate: number
 
-  frameData: CanvasPlayerFrame[] = []
   #semaphore = new Semaphore()
 
   constructor(options: {
@@ -30,17 +29,18 @@ export class FrameLoader {
   }
 
   load(callback?: () => void) {
+    const frameData: CanvasPlayerFrame[] = []
     for (let i = 0; i < this.imgCount; i++) {
-      this.#loadImg(i, callback)
+      this.#loadImg(i, frameData, callback)
     }
     return {
       id: this.id,
       totalFrames: this.imgCount,
-      frameData: this.frameData,
+      frameData: frameData,
     }
   }
 
-  async #loadImg(i: number, callback?: () => void) {
+  async #loadImg(i: number, frameData: CanvasPlayerFrame[], callback?: () => void) {
     const release = await this.#semaphore.enter()
 
     const id = zeroPadding(i, 4)
@@ -53,21 +53,14 @@ export class FrameLoader {
     frame.img.src = imgPath
     frame.img.onload = () => {
       frame.complete = true
-      release()
-      if (this.#getLoadProgress() === 1) {
+      const loadedFrameCount = frameData.filter(frame => frame.complete).length;
+      const loadProgress = normalize(loadedFrameCount, 0 , this.imgCount)
+      if (loadProgress === 1) {
         callback?.();
       }
+      release()
     }
-    this.frameData.push(frame)
+    frameData.push(frame)
   }
 
-  #getLoadProgress() {
-    let count = 0
-    this.frameData.forEach((data) => {
-      if (data.complete) {
-        count++
-      }
-    })
-    return normalize(count, 0, this.imgCount)
-  }
 }
