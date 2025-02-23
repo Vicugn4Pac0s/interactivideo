@@ -8,9 +8,9 @@ import { FrameController } from './FrameController';
 interface CanvasPlayerEvents {}
 
 export class CanvasPlayer {
-  playState = false;
   #data: CanvasPlayerData[] = [];
   #currentData: CanvasPlayerData | null = null;
+  #playState = false;
   #canvasManager: CanvasManager;
   #frameController = new FrameController();
   #observer = new Observer<CanvasPlayerEvents>();
@@ -75,7 +75,7 @@ export class CanvasPlayer {
   }
 
   playWithProgress(progress: number) {
-    if (this.playState || this.#currentData === null) return;
+    if (this.#playState || this.#currentData === null) return;
     const targetFrame = Math.floor(progress * this.#currentData.imgCount);
     this.#frameController.targetFrame = targetFrame;
   }
@@ -91,14 +91,14 @@ export class CanvasPlayer {
   }
 
   play(options = {}) {
-    if (this.playState) return;
-    this.playState = true;
+    if (this.#playState) return;
+    this.#playState = true;
     this.#frameController.setFrameOptions(options);
     this.#moveFrame();
   }
 
   pause() {
-    this.playState = false;
+    this.#playState = false;
   }
 
   seekTo(frameNumber = 0) {
@@ -110,8 +110,8 @@ export class CanvasPlayer {
 
   #moveFrame() {
     if (!this.#currentData) return;
-    if (!this.playState) return;
-    this.playState = this.#frameController.changeFrame();
+    if (!this.#playState) return;
+    this.#playState = this.#frameController.changeFrame();
     requestAnimationFrame(this.#moveFrame.bind(this));
   }
 
