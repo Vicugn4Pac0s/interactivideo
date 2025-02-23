@@ -1,13 +1,7 @@
-import { CanvasPlayerFrame } from '../type'
+import { FrameData, FrameLoaderOptions } from './type'
 import { normalize, zeroPadding } from '../helpers'
 import Semaphore from '../helpers/Semaphore'
 
-interface FrameLoaderOptions {
-  id: string
-  extension: 'jpg' | 'png' | 'webp';
-  totalFrames: number,
-  callback?: () => void
-}
 export class FrameLoader {
   dir: string
 
@@ -20,7 +14,7 @@ export class FrameLoader {
   }
 
   load(options: FrameLoaderOptions) {
-    const frameData: CanvasPlayerFrame[] = []
+    const frameData: FrameData[] = []
     for (let i = 0; i < options.totalFrames; i++) {
       this.#loadImg(i, frameData, options)
     }
@@ -31,7 +25,7 @@ export class FrameLoader {
     }
   }
 
-  async #loadImg(i: number, frameData: CanvasPlayerFrame[], options: FrameLoaderOptions) {
+  async #loadImg(i: number, frameData: FrameData[], options: FrameLoaderOptions) {
     const release = await this.#semaphore.enter()
 
     const id = zeroPadding(i, 4)

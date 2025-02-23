@@ -1,22 +1,9 @@
-import { CanvasPlayerData } from '../type';
+import { CanvasPlayerData, CanvasPlayerEvents, CanvasPlayerLoaderOptions, CanvasPlayerOptions, FrameControllerOptions } from './type';
 import { findData, normalize } from '../helpers';
 import Observer from '../helpers/Observer';
 import { CanvasManager } from './CanvasManager';
 import { FrameLoader } from './FrameLoader';
 import { FrameController } from './FrameController';
-
-interface CanvasPlayerOptions {
-  dir?: string;
-  fps?: number;
-}
-
-interface LoaderOptions {
-  id: string;
-  extension?: 'jpg' | 'png' | 'webp';
-  totalFrames: number,
-}
-
-interface CanvasPlayerEvents {}
 
 export class CanvasPlayer {
   #data: CanvasPlayerData[] = [];
@@ -60,7 +47,7 @@ export class CanvasPlayer {
     }
   }
 
-  load(options: LoaderOptions) {
+  load(options: CanvasPlayerLoaderOptions) {
     if (findData(options.id, this.#data)) return;
 
     const data = this.#frameLoader.load({
@@ -98,10 +85,10 @@ export class CanvasPlayer {
     this.pause();
   }
 
-  play(options = {}) {
+  play(options?: FrameControllerOptions) {
     if (this.#playState) return;
     this.#playState = true;
-    this.#frameController.setFrameOptions(options);
+    this.#frameController.setFrameOptions(options || {});
     this.#progressFrame();
   }
 

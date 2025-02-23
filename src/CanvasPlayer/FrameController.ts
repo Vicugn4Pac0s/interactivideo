@@ -1,7 +1,4 @@
-interface FrameOptions {
-  reverse?: boolean;
-  loop?: boolean;
-}
+import { FrameControllerOptions } from "./type";
 
 export class FrameController {
   #lastFrameTime = performance.now();
@@ -14,7 +11,7 @@ export class FrameController {
     target: 0,
     total: 0
   };
-  #frameOptions: FrameOptions = {
+  #frameOptions: FrameControllerOptions = {
     reverse: false,
     loop: false,
   };
@@ -60,7 +57,7 @@ export class FrameController {
     };
   }
 
-  setFrameOptions(options: FrameOptions) {
+  setFrameOptions(options: FrameControllerOptions) {
     this.#frameOptions = { 
       reverse: false,
       loop: false,
