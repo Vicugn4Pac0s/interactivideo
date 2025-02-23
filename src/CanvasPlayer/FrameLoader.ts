@@ -45,6 +45,10 @@ export class FrameLoader {
       }
       release()
     }
+    frame.img.onerror = () => {
+      console.error(`Failed to load image: ${imgPath}`)
+      release()
+    }
     frameData.push(frame)
   }
 
