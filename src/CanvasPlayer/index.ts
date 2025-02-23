@@ -1,9 +1,13 @@
-import { CanvasPlayerData, CanvasPlayerEvents, CanvasPlayerLoaderOptions, CanvasPlayerOptions, FrameControllerOptions } from './type';
+import { CanvasPlayerData, CanvasPlayerLoaderOptions, CanvasPlayerOptions, FrameControllerOptions } from './type';
 import { findData, normalize } from '../helpers';
 import Observer from '../helpers/Observer';
 import { CanvasManager } from './CanvasManager';
 import { FrameLoader } from './FrameLoader';
 import { FrameController } from './FrameController';
+
+interface CanvasPlayerEvents {
+  player: CanvasPlayer;
+}
 
 export class CanvasPlayer {
   #data: CanvasPlayerData[] = [];
@@ -27,8 +31,21 @@ export class CanvasPlayer {
     });
   }
 
-  getVideoIds() {
+  get videoIds() {
     return this.#data.map((e) => e.id);
+  }
+
+  get currentData() {
+    return this.#currentData;
+  }
+
+  get playerProgress() {
+    if (!this.#currentData) return 0;
+    return normalize(
+      this.#frameController.currentFrame,
+      0,
+      this.#currentData.totalFrames - 1
+    );
   }
 
   on(eventName: string, callback: () => void) {
@@ -56,7 +73,7 @@ export class CanvasPlayer {
       totalFrames: options.totalFrames,
       callback: () => {
         this.#observer.trigger('loaded', {
-          videoId: options.id,
+          player: this,
         });
       }
     });
@@ -133,12 +150,7 @@ export class CanvasPlayer {
     this.#frameController.currentFrame = nextFrame;
 
     this.#observer.trigger('playing', {
-      videoId: this.#currentData.id,
-      playProgress: normalize(
-        this.#frameController.currentFrame,
-        0,
-        this.#currentData.totalFrames - 1
-      ),
+      player: this,
     });
   }
 }

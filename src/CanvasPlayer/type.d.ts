@@ -15,10 +15,6 @@ export interface CanvasPlayerLoaderOptions {
   totalFrames: number,
 }
 
-export interface CanvasPlayerEvents {
-  
-}
-
 export interface FrameData {
   id: string;
   img: HTMLImageElement;
