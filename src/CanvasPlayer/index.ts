@@ -70,7 +70,7 @@ export class CanvasPlayer {
 
     if (this.#currentData === null) {
       this.changeCurrentData(opts.id);
-      this.#render();
+      this.#refreshFrame();
     }
   }
 
@@ -94,7 +94,7 @@ export class CanvasPlayer {
     if (this.#playState) return;
     this.#playState = true;
     this.#frameController.setFrameOptions(options);
-    this.#moveFrame();
+    this.#progressFrame();
   }
 
   pause() {
@@ -108,15 +108,15 @@ export class CanvasPlayer {
     this.#canvasManager.drawFrame(this.#currentData.frameData[frameNumber].img);
   }
 
-  #moveFrame() {
+  #progressFrame() {
     if (!this.#currentData) return;
     if (!this.#playState) return;
     this.#playState = this.#frameController.changeFrame();
-    requestAnimationFrame(this.#moveFrame.bind(this));
+    requestAnimationFrame(this.#progressFrame.bind(this));
   }
 
-  #render() {
-    requestAnimationFrame(this.#render.bind(this));
+  #refreshFrame() {
+    requestAnimationFrame(this.#refreshFrame.bind(this));
 
     if (!this.#currentData) return;
     if (this.#frameController.currentFrame === this.#frameController.targetFrame) return;
