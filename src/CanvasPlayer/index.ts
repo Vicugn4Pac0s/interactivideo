@@ -55,7 +55,6 @@ export class CanvasPlayer {
       imgDir: '',
       imgExt: 'jpg',
       imgCount: 0,
-      fps: 30,
       ...options
     };
     const loader = new FrameLoader(opts);
@@ -109,8 +108,15 @@ export class CanvasPlayer {
   }
 
   #progressFrame() {
-    if (!this.#currentData) return;
-    if (!this.#playState) return;
+    const now = performance.now();
+
+    if (now - this.#frameController.lastFrameTime < this.#frameController.frameInterval) {
+      requestAnimationFrame(this.#progressFrame.bind(this));
+      return;
+    }
+    this.#frameController.lastFrameTime = now;
+
+    if (!this.#playState || !this.#currentData) return;
     this.#playState = this.#frameController.changeFrame();
     requestAnimationFrame(this.#progressFrame.bind(this));
   }

@@ -4,6 +4,11 @@ interface FrameOptions {
 }
 
 export class FrameController {
+  #lastFrameTime = performance.now();
+  #fpsState = {
+    fps: 15,
+    frameInterval: 1e3 / 15
+  }
   #frameState = {
     current: -1,
     target: 0,
@@ -13,6 +18,18 @@ export class FrameController {
     reverse: false,
     loop: false,
   };
+
+  set lastFrameTime(time: number) {
+    this.#lastFrameTime = time;
+  }
+
+  get lastFrameTime() {
+    return this.#lastFrameTime;
+  }
+
+  get frameInterval() {
+    return this.#fpsState.frameInterval;
+  }
 
   set currentFrame(frame: number) {
     this.#frameState.current = frame;
@@ -28,6 +45,11 @@ export class FrameController {
 
   get targetFrame() {
     return this.#frameState.target;
+  }
+
+  setFPS(fps: number) {
+    this.#fpsState.fps = fps;
+    this.#fpsState.frameInterval = 1e3 / fps;
   }
 
   setFrame(frames: number) {

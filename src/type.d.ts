@@ -16,5 +16,4 @@ export interface LoaderOptions {
   imgDir?: string;
   imgExt?: string;
   imgCount?: number;
-  fps?: number;
 }

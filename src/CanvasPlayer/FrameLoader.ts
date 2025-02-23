@@ -12,7 +12,6 @@ export class FrameLoader {
   imgDir: string
   imgExt: string
   imgCount: number
-  fps: number
   rate: number
 
   frameData: CanvasPlayerFrame[] = []
@@ -23,13 +22,11 @@ export class FrameLoader {
     imgDir: string
     imgExt: string
     imgCount: number
-    fps: number
   }) {
     this.id = options.id
     this.imgDir = options.imgDir
     this.imgExt = options.imgExt
     this.imgCount = options.imgCount
-    this.fps = options.fps
     this.rate = normalize(1, 0, this.imgCount) * 100
   }
 
