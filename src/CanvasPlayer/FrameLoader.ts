@@ -8,11 +8,6 @@ interface FrameLoaderOptions {
   totalFrames: number,
   callback?: () => void
 }
-
-// TODO; コンストラクタでディレクトリの設定を
-// TODO: {id}-{拡張子}-{フレーム数}の形式にし、不要なオプションを削除する
-// TODO: フレームのロードを非同期にする
-// TODO: インスタンスは一つで完結するようにする
 export class FrameLoader {
   dir: string
 
