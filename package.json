@@ -10,6 +10,10 @@
     "dist",
     "types"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Vicugn4Pac0s/interactivideo"
+  },
   "scripts": {
     "clean": "rimraf dist",
     "prepublish": "rimraf dist && $(npm bin)/tsc",
