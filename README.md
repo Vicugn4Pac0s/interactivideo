@@ -49,6 +49,10 @@ canvasPlayer.load({
 });
 ```
 
+## npm パッケージ
+
+npm 上での詳細情報や最新バージョンについては、[npm パッケージページ](https://www.npmjs.com/package/interactivideo) をご覧ください。
+
 ## ライセンス
 
 Interactivideo は MIT ライセンスの下で提供されています。
