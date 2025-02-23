@@ -41,7 +41,6 @@ export class FrameLoader {
 
     const id = zeroPadding(i, 4)
     const imgPath = `${this.dir}${options.id}/${id}.${options.extension}`
-    console.log(imgPath)
     const frame = {
       id,
       img: new Image(),
