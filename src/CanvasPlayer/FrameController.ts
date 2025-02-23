@@ -6,8 +6,8 @@ interface FrameOptions {
 export class FrameController {
   #lastFrameTime = performance.now();
   #fpsState = {
-    fps: 15,
-    frameInterval: 1e3 / 15
+    fps: 30,
+    frameInterval: 1e3 / 30
   }
   #frameState = {
     current: -1,

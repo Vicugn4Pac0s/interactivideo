@@ -5,7 +5,6 @@ import Semaphore from '../helpers/Semaphore'
 // TODO; コンストラクタでディレクトリの設定を
 // TODO: {id}-{拡張子}-{フレーム数}の形式にし、不要なオプションを削除する
 // TODO: フレームのロードを非同期にする
-// TODO: fpsはCanvasPlayerで設定に変更。
 // TODO: インスタンスは一つで完結するようにする
 export class FrameLoader {
   id: string

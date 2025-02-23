@@ -16,7 +16,9 @@ ivCanvasPlayer.load({
   imgExt: 'webp',
 });
 
-const ivCanvasPlayer02 = new Interactivideo.CanvasPlayer("iv-canvas-player02");
+const ivCanvasPlayer02 = new Interactivideo.CanvasPlayer("iv-canvas-player02", {
+  fps: 60
+});
 
 gsap.timeline({
   scrollTrigger: {

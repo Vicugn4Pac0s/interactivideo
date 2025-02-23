@@ -5,6 +5,10 @@ import { CanvasManager } from './CanvasManager';
 import { FrameLoader } from './FrameLoader';
 import { FrameController } from './FrameController';
 
+interface CanvasPlayerOptions {
+  fps?: number;
+}
+
 interface CanvasPlayerEvents {}
 
 export class CanvasPlayer {
@@ -15,8 +19,9 @@ export class CanvasPlayer {
   #frameController = new FrameController();
   #observer = new Observer<CanvasPlayerEvents>();
 
-  constructor(id: string) {
+  constructor(id: string, options?: CanvasPlayerOptions) {
     this.#canvasManager = new CanvasManager(id);
+    this.#frameController.setFPS(options?.fps || 30);
     if (!this.#canvasManager.ctx) return;
 
     this.#canvasManager.onResize(() => {
