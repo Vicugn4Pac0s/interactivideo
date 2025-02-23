@@ -33,14 +33,10 @@ export class FrameLoader {
     for (let i = 0; i < this.imgCount; i++) {
       this.#loadImg(i, callback)
     }
-  }
-
-  get() {
     return {
       id: this.id,
+      totalFrames: this.imgCount,
       frameData: this.frameData,
-      imgCount: this.imgCount,
-      rate: this.rate
     }
   }
 

@@ -1,8 +1,7 @@
 export interface CanvasPlayerData {
   id: string;
   frameData: CanvasPlayerFrame[];
-  imgCount: number;
-  rate: number;
+  totalFrames: number;
 }
 
 export interface CanvasPlayerFrame {

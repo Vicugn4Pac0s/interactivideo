@@ -63,13 +63,12 @@ export class CanvasPlayer {
       ...options
     };
     const loader = new FrameLoader(opts);
-    loader.load(() => {
+    const data = loader.load(() => {
       this.#observer.trigger('loaded', {
         videoId: opts.id,
       });
     });
 
-    const data = loader.get();
     this.#data.push(data);
 
     if (this.#currentData === null) {
@@ -80,7 +79,7 @@ export class CanvasPlayer {
 
   playWithProgress(progress: number) {
     if (this.#playState || this.#currentData === null) return;
-    const targetFrame = Math.floor(progress * this.#currentData.imgCount);
+    const targetFrame = Math.floor(progress * this.#currentData.totalFrames);
     this.#frameController.targetFrame = targetFrame;
   }
 
@@ -89,7 +88,7 @@ export class CanvasPlayer {
     if (!currentData) return;
 
     this.#currentData = currentData;
-    this.#frameController.setFrame(currentData.imgCount);
+    this.#frameController.setFrame(currentData.totalFrames);
 
     this.pause();
   }
@@ -146,7 +145,7 @@ export class CanvasPlayer {
       playProgress: normalize(
         this.#frameController.currentFrame,
         0,
-        this.#currentData.imgCount - 1
+        this.#currentData.totalFrames - 1
       ),
     });
   }
