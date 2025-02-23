@@ -10,6 +10,13 @@
     "dist",
     "types"
   ],
+  "keywords": [
+    "video",
+    "canvas",
+    "interactive",
+    "player",
+    "scroll"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/Vicugn4Pac0s/interactivideo"
