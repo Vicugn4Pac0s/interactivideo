@@ -45,8 +45,14 @@ export class CanvasPlayer {
   #frameController = new FrameController();
   #observer = new Observer<CanvasPlayerEvents>();
 
-  constructor(id: string, options?: CanvasPlayerOptions) {
-    this.#canvasManager = new CanvasManager(id);
+  constructor(target: HTMLCanvasElement | string, options?: CanvasPlayerOptions) {
+    const canvasElement = typeof target === 'string' 
+      ? document.getElementById(target) as HTMLCanvasElement 
+      : target;
+    if (!canvasElement || canvasElement.tagName !== 'CANVAS') {
+      throw new Error('The element is not a canvas element.');
+    }
+    this.#canvasManager = new CanvasManager(canvasElement);
     this.#frameLoader = new FrameLoader({ dir: options?.dir || '/frames/' });
     this.#frameController.setFPS(options?.fps || 30);
     if (!this.#canvasManager.ctx) return;

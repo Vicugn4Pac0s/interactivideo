@@ -2,12 +2,8 @@ export class CanvasManager {
   canvasDOM: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D | null = null;
 
-  constructor(id: string) {
-    this.canvasDOM = document.getElementById(id) as HTMLCanvasElement;
-    if (!this.canvasDOM || this.canvasDOM.tagName !== 'CANVAS') {
-      console.error(`The element with the ID "${id}" is not a canvas element.`);
-      return;
-    }
+  constructor(canvasElement: HTMLCanvasElement) {
+    this.canvasDOM = canvasElement;
     this.ctx = this.canvasDOM.getContext('2d');
     if (!this.ctx) {
       console.error('Failed to get 2D context.');
