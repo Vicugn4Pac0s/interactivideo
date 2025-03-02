@@ -46,7 +46,7 @@ interface PlayerEvents {
  * このクラスはビデオプレーヤーの制御を行うクラスです。
  */
 export class Player {
-  player: HTMLVideoElement
+  player!: HTMLVideoElement
   #fps = 15
   #frameState: FrameState = {
     current: -1,
@@ -63,7 +63,7 @@ export class Player {
   /**
    * プレーヤーのインスタンスを作成します。
    * 
-   * @param id - HTMLビデオ要素のID。
+   * @param videoSource - HTMLビデオ要素のIDまたはHTMLVideoElement。
    * @param params - プレーヤーのオプションパラメータ。
    * @param params.fps - プレーヤーのフレーム毎秒。
    * 
@@ -71,12 +71,20 @@ export class Player {
    * 指定されたIDの要素がビデオ要素でない場合、コンソールにエラーが記録されます。
    * fpsの範囲は1から60の間である必要があります。デフォルトは15です。
    */
-  constructor(id: string, params?: { fps: number }) {
-    this.player = document.getElementById(id) as HTMLVideoElement
-    if (!this.player || this.player.tagName !== 'VIDEO') {
-      console.error(`The element with the ID "${id}" is not a video element.`)
+  constructor(videoSource: string | HTMLVideoElement, params?: { fps: number }) {
+    if (typeof videoSource === 'string') {
+      this.player = document.getElementById(videoSource) as HTMLVideoElement
+      if (!this.player || this.player.tagName !== 'VIDEO') {
+        console.error(`The element with the ID "${videoSource}" is not a video element.`)
+        return
+      }
+    } else if (videoSource instanceof HTMLVideoElement) {
+      this.player = videoSource
+    } else {
+      console.error(`The provided argument is neither a string nor an HTMLVideoElement.`)
       return
     }
+
     if (params?.fps && (params.fps < 1 || params.fps > 60)) {
       console.error(`The fps value "${params.fps}" is out of range. It must be between 1 and 60.`)
       return
